@@ -217,6 +217,25 @@ class WebauthnTest extends FeatureTestCase
         $this->assertTrue($this->app->make(Webauthn::class)->enabled($user));
     }
 
+    public function test_enabled_but_temporarily_disabled()
+    {
+        $user = $this->signIn();
+
+        factory(WebauthnKey::class)->create([
+            'user_id' => $user->getAuthIdentifier(),
+        ]);
+
+        $this->assertTrue($this->app->make(Webauthn::class)->enabled($user));
+
+        $user->disable_webauthn_until = now()->addSeconds(10);
+
+        $this->assertFalse($this->app->make(Webauthn::class)->enabled($user));
+
+        $user->disable_webauthn_until = now()->addSeconds(-10);
+
+        $this->assertTrue($this->app->make(Webauthn::class)->enabled($user));
+    }
+
     public function test_aaguid_null()
     {
         $webauthnKey = new WebauthnKey();

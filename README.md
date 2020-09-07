@@ -185,6 +185,28 @@ If `postSuccessRedirectRoute` is empty, the return will be JSON form:
 ```
 
 
+## Temporarily disable for a specific user
+
+A situation may arise where a user needs to setup multiple tokens but is unable to do so. For example, a user may have
+a USB Type A security key connected to his desktop computer. But since this security key isn't compatible with his
+phone or tablet, he's unable to login from those other devices once Webauthn has been setup.
+
+In this example, the user wants to use his iris or fingerprint to authenticate on his phone, a USB Type C security
+key to authenticate on his tablet, and a USB Type A security key to authenticate on his desktop computer.
+
+1. The user will login from his desktop computer and authenticate with Webauthn
+2. The user will press a button in the Laravel app that sets the `disable_webauthn_until` timestamp on the `App\User`
+model to a date in the future. Webauthn will be disabled for that user until that time or until the field is set to null.
+    ```
+    $user->disable_webauthn_until = now()->addSeconds(30);
+    $user->save();
+    ```
+
+3. The user will login from his phone or tablet without being prompted for Webauthn authentication
+4. The user will setup an additional Webauthn token on the new device
+
+
+
 ## Urls
 
 These url are used

@@ -106,6 +106,7 @@ class FeatureTestCase extends TestCase
     {
         $user = new Authenticated();
         $user->email = 'john@doe.com';
+        $user->disable_webauthn_until = null;
 
         return $user;
     }

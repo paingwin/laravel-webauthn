@@ -59,6 +59,10 @@ class WebauthnMiddleware
             }
         }
 
+        if (now() < $this->auth->user()->disable_webauthn_until) {
+            app()->make(\LaravelWebauthn\Services\Webauthn::class)->forceAuthenticate();
+        }
+
         return $next($request);
     }
 }
